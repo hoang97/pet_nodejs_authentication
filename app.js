@@ -1,16 +1,23 @@
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-const blogRoutes = require('./routes/blogRoutes')
+const fs = require('fs');
+const blogRoutes = require('./routes/blogRoutes');
 
 // express app
 const app = express();
 
-// connect to mongoDB then listen to port 3000
-const dbURI = 'mongodb+srv://hoang:Hoangndnd1805!!!@nodejs.nwqx39z.mongodb.net/blogs?retryWrites=true&w=majority';
-mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then((result) => app.listen(3000))
-    .catch((err) => console.log(err));
+// connect to mongoDB then listen to port 3000 with credential from file credential
+fs.readFile('./credential.json', (err, data) => {
+    if (err) {
+        console.log(err);
+    }
+    credential = JSON.parse(data);
+    const dbURI = `mongodb+srv://${credential.username}:${credential.password}@nodejs.nwqx39z.mongodb.net/blogs?retryWrites=true&w=majority`;
+    mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
+        .then((result) => app.listen(3000))
+        .catch((err) => console.log(err));
+});
 
 // register view engine
 app.set('view engine', 'ejs');
